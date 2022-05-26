@@ -103,6 +103,10 @@ The sender works by having the hardcoded packet inside a std_logic_vector, a mas
 
 *Debuggin might be easier on Linux. Here's a link if you're on Windows (I have not tested it) : https://www.intel.com/content/www/us/en/support/articles/000005498/network-and-i-o/ethernet-products.html*
 
+
+https://www.scadacore.com/tools/programming-calculators/online-checksum-calculator/
+
+
 Obviously, I spent a lot of time debugging. I did not know what the frame was supposed to look like, the one I was looking at during simulation seemed correct. It was not. My FPGA was connected to my computer, sending frames every two seconds, but wireshark was empty. Not a packet in sight. It made it very difficult to find what was the problem. Hopefully, I saw in [this video](https://youtu.be/zTsHbEIOM2A) a way to see packets in wireshark even if the frame or CRC is wrong. 
 
 ```

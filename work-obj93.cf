@@ -1,19 +1,22 @@
 v 4
-file . "src/frame_gen.vhd" "260a0f1218ab6926b35c86cb46acbf5c1e854bb2" "20220526112610.271":
-  entity frame_gen at 1( 0) + 0 on 133;
-  architecture behavioral of frame_gen at 19( 370) + 0 on 134;
+file . "src/frame_gen.vhd" "875cd52551425f44d4d85b40a8ddf3daa56e6e56" "20220526172847.062":
+  entity frame_gen at 1( 0) + 0 on 229;
+  architecture behavioral of frame_gen at 19( 370) + 0 on 230;
 file . "src/packet_sender.vhd" "14daebb0a8789c1193bf5d6a0cae8cd043c36dca" "20220513151828.858":
   entity packet_sender at 1( 0) + 0 on 33;
   architecture behavioral of packet_sender at 14( 268) + 0 on 34;
-file . "src/ethernet.vhd" "75cc2d62dc5663453042a254829f04e67e82bf41" "20220526112610.224":
-  entity ethernet at 1( 0) + 0 on 129;
-  architecture behavioral of ethernet at 40( 903) + 0 on 130;
-file . "tb/ethernet_tb.vhd" "a5b9991f142caa823efc40d6e3a5897e690055ce" "20220526112610.246":
-  entity ethernet_tb at 1( 0) + 0 on 131;
-  architecture test of ethernet_tb at 7( 90) + 0 on 132;
+file . "src/ethernet.vhd" "11cdbeab598638fd91945e1c5d9d727046d3395c" "20220526172847.017":
+  entity ethernet at 1( 0) + 0 on 225;
+  architecture behavioral of ethernet at 40( 903) + 0 on 226;
+file . "tb/ethernet_tb.vhd" "a5b9991f142caa823efc40d6e3a5897e690055ce" "20220526172847.037":
+  entity ethernet_tb at 1( 0) + 0 on 227;
+  architecture test of ethernet_tb at 7( 90) + 0 on 228;
 file . "tb/packet_sender_tb.vhd" "e12047a1fcd8b34eb955d6ee87fe52268a33cfeb" "20220513151828.877":
   entity packet_sender_tb at 1( 0) + 0 on 35;
   architecture test of packet_sender_tb at 7( 100) + 0 on 36;
 file . ".\src\ethernet_package.vhd" "684828f362de3f2884d88701ac65086cb63e9606" "20220526103653.729":
   package ethernet_pkg at 5( 98) + 0 on 79 body;
   package body ethernet_pkg at 23( 626) + 0 on 80;
+file . ".\src\crc_gen.vhd" "98506ae6105ed3554ba78ca37d86264c84442f2a" "20220526124931.231":
+  entity crc at 24( 1092) + 0 on 135;
+  architecture behavioral of crc at 35( 1342) + 0 on 136;

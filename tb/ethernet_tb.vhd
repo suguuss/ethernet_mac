@@ -53,7 +53,7 @@ begin
 			clk <= '1'; wait for 1 ns;
 			sw <= b"11";
 
-		for i in 0 to 75000 loop
+		for i in 0 to 7500 loop
 			clk <= '0'; wait for 1 ns;
 			clk <= '1'; wait for 1 ns;
 		end loop;

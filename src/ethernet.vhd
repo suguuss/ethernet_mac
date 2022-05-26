@@ -53,7 +53,6 @@ architecture behavioral of ethernet is
 	signal counter: integer := 0;
 	signal go: std_logic := '0';
 	signal header: t_ethernet_header := (mac_dst => x"00D86119493B", mac_src => x"001122334455", ip_type => x"0000");
-	signal debug_mac_src: std_logic_vector(6*8-1 downto 0) := header.mac_src;
 begin
 
 	process (NET_TX_CLK)
