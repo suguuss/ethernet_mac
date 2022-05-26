@@ -2,6 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library work;
+use work.ethernet_pkg.all;
+
+
 entity ethernet is 
 	port (
 		--  CLOCK 
@@ -34,18 +38,22 @@ entity ethernet is
 end ethernet;
 
 architecture behavioral of ethernet is
-	component packet_sender
+	component frame_gen
 		port (
 			tx_clk: 	in		std_logic;
 			rst_n:		in		std_logic;
-			tx_go: 		in		std_logic;
+			tx_send:	in		std_logic;
+			tx_header:  in		t_ethernet_header;
+	
 			tx_en: 		out 	std_logic := '1';
-			tx_d:		out 	std_logic_vector(3 downto 0)	
+			tx_d:		out 	std_logic_vector(3 downto 0)
 		) ;
 	end component;
 	
 	signal counter: integer := 0;
 	signal go: std_logic := '0';
+	signal header: t_ethernet_header := (mac_dst => x"00D86119493B", mac_src => x"001122334455", ip_type => x"0000");
+	signal debug_mac_src: std_logic_vector(6*8-1 downto 0) := header.mac_src;
 begin
 
 	process (NET_TX_CLK)
@@ -65,8 +73,7 @@ begin
 	end process;
 	
 	NET_RESET_n <= KEY(1);
-	-- go <= not(KEY(0));
-	u1: packet_sender port map(tx_clk => NET_TX_CLK, rst_n => '1', tx_go =>go, tx_en => NET_TX_EN, tx_d => NET_TXD);
+	u1: frame_gen port map(tx_clk => NET_TX_CLK, tx_header => header, rst_n => KEY(0), tx_send => go, tx_en => NET_TX_EN, tx_d => NET_TXD);
 	
 end behavioral ;
 

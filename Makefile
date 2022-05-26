@@ -7,7 +7,7 @@ TB=tb
 
 GHDL=ghdl
 GHDLFLAGS=
-GHDLRUNFLAGS=--vcd=$(UNITNAME).vcd
+GHDLRUNFLAGS=--wave=$(UNITNAME).ghw
 
 # Default target : elaborate
 all : init elab
@@ -26,9 +26,9 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(UNITNAME).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(UNITNAME)_tb.vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(UNITNAME1).vhd
-	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(UNITNAME1)_tb.vhd
+	# $(GHDL) -a $(GHDLFLAGS) $(TB)/$(UNITNAME1)_tb.vhd
 
 gtk: run
-	gtkwave $(UNITNAME).vcd
+	gtkwave $(UNITNAME).ghw
 
 force:

@@ -46,6 +46,13 @@ begin
 
 	process begin
 
+			sw <= b"00";
+			clk <= '0'; wait for 1 ns;
+			clk <= '1'; wait for 1 ns;
+			clk <= '0'; wait for 1 ns;
+			clk <= '1'; wait for 1 ns;
+			sw <= b"11";
+
 		for i in 0 to 75000 loop
 			clk <= '0'; wait for 1 ns;
 			clk <= '1'; wait for 1 ns;
