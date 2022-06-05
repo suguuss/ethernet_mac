@@ -14,35 +14,58 @@ entity crc_gen is
 end crc_gen;
 
 architecture behavioral of crc_gen is
-	signal lfsr_q: std_logic_vector(31 downto 0);
-	signal lfsr_c: std_logic_vector(31 downto 0);
+	signal lfsr_q: std_logic_vector(31 downto 0) := x"FFFFFFFF";
+	signal lfsr_c: std_logic_vector(31 downto 0) := x"FFFFFFFF";
 begin
 
 	-- xor on the output
 	crc_out <= lfsr_c xor x"ffffffff";
 
-	-- used https://bues.ch/cms/hacking/crcgen to generate this code
-
 	-- -------------------------------------------------------------------------
-	-- https://bues.ch/h/crcgen
-	--
-	-- This code is Public Domain.
-	-- Permission to use, copy, modify, and/or distribute this software for any
-	-- purpose with or without fee is hereby granted.
-	--
-	-- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-	-- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-	-- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-	-- SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
-	-- RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
-	-- NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
-	-- USE OR PERFORMANCE OF THIS SOFTWARE.
+	--                              0x4C11DB7 (hex)
+	-- CRC width:                   32 bits
+	-- CRC shift direction:         left (big endian)
+	-- Input word width:            4 bits
 
-	-- CRC polynomial coefficients: x^32 + x^26 + x^23 + x^22 + x^16 + x^12 + x^11 + x^10 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
+	-- lfsr_c(0) <= (data_in(0) xor lfsr_q(28));
+	-- lfsr_c(1) <= (data_in(0) xor data_in(1) xor lfsr_q(28) xor lfsr_q(29));
+	-- lfsr_c(2) <= (data_in(0) xor data_in(1) xor data_in(2) xor lfsr_q(28) xor lfsr_q(29) xor lfsr_q(30));
+	-- lfsr_c(3) <= (data_in(1) xor data_in(2) xor data_in(3) xor lfsr_q(29) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(4) <= (data_in(0) xor data_in(2) xor data_in(3) xor lfsr_q(0) xor lfsr_q(28) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(5) <= (data_in(0) xor data_in(1) xor data_in(3) xor lfsr_q(1) xor lfsr_q(28) xor lfsr_q(29) xor lfsr_q(31));
+	-- lfsr_c(6) <= (data_in(1) xor data_in(2) xor lfsr_q(2) xor lfsr_q(29) xor lfsr_q(30));
+	-- lfsr_c(7) <= (data_in(0) xor data_in(2) xor data_in(3) xor lfsr_q(3) xor lfsr_q(28) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(8) <= (data_in(0) xor data_in(1) xor data_in(3) xor lfsr_q(4) xor lfsr_q(28) xor lfsr_q(29) xor lfsr_q(31));
+	-- lfsr_c(9) <= (data_in(1) xor data_in(2) xor lfsr_q(5) xor lfsr_q(29) xor lfsr_q(30));
+	-- lfsr_c(10) <= (data_in(0) xor data_in(2) xor data_in(3) xor lfsr_q(6) xor lfsr_q(28) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(11) <= (data_in(0) xor data_in(1) xor data_in(3) xor lfsr_q(7) xor lfsr_q(28) xor lfsr_q(29) xor lfsr_q(31));
+	-- lfsr_c(12) <= (data_in(0) xor data_in(1) xor data_in(2) xor lfsr_q(8) xor lfsr_q(28) xor lfsr_q(29) xor lfsr_q(30));
+	-- lfsr_c(13) <= (data_in(1) xor data_in(2) xor data_in(3) xor lfsr_q(9) xor lfsr_q(29) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(14) <= (data_in(2) xor data_in(3) xor lfsr_q(10) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(15) <= (data_in(3) xor lfsr_q(11) xor lfsr_q(31));
+	-- lfsr_c(16) <= (data_in(0) xor lfsr_q(12) xor lfsr_q(28));
+	-- lfsr_c(17) <= (data_in(1) xor lfsr_q(13) xor lfsr_q(29));
+	-- lfsr_c(18) <= (data_in(2) xor lfsr_q(14) xor lfsr_q(30));
+	-- lfsr_c(19) <= (data_in(3) xor lfsr_q(15) xor lfsr_q(31));
+	-- lfsr_c(20) <= lfsr_q(16);
+	-- lfsr_c(21) <= lfsr_q(17);
+	-- lfsr_c(22) <= (data_in(0) xor lfsr_q(18) xor lfsr_q(28));
+	-- lfsr_c(23) <= (data_in(0) xor data_in(1) xor lfsr_q(19) xor lfsr_q(28) xor lfsr_q(29));
+	-- lfsr_c(24) <= (data_in(1) xor data_in(2) xor lfsr_q(20) xor lfsr_q(29) xor lfsr_q(30));
+	-- lfsr_c(25) <= (data_in(2) xor data_in(3) xor lfsr_q(21) xor lfsr_q(30) xor lfsr_q(31));
+	-- lfsr_c(26) <= (data_in(0) xor data_in(3) xor lfsr_q(22) xor lfsr_q(28) xor lfsr_q(31));
+	-- lfsr_c(27) <= (data_in(1) xor lfsr_q(23) xor lfsr_q(29));
+	-- lfsr_c(28) <= (data_in(2) xor lfsr_q(24) xor lfsr_q(30));
+	-- lfsr_c(29) <= (data_in(3) xor lfsr_q(25) xor lfsr_q(31));
+	-- lfsr_c(30) <= lfsr_q(26);
+	-- lfsr_c(31) <= lfsr_q(27);
+	
+	-- -------------------------------------------------------------------------
 	--                              0xEDB88320 (hex)
 	-- CRC width:                   32 bits
 	-- CRC shift direction:         right (little endian)
 	-- Input word width:            4 bits
+
 
 	lfsr_c(0) <= lfsr_q(4);
 	lfsr_c(1) <= lfsr_q(5);
@@ -76,8 +99,11 @@ begin
 	lfsr_c(29) <= (data_in(1) xor data_in(2) xor data_in(3) xor lfsr_q(1) xor lfsr_q(2) xor lfsr_q(3));
 	lfsr_c(30) <= (data_in(2) xor data_in(3) xor lfsr_q(2) xor lfsr_q(3));
 	lfsr_c(31) <= (data_in(3) xor lfsr_q(3));
+	
+	
+	-- -------------------------------------------------------------------------
 
-   -- -------------------------------------------------------------------------
+
 
 	process (clk, rst) begin
 		if rising_edge(clk) then

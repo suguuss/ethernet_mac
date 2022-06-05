@@ -106,6 +106,7 @@ The sender works by having the hardcoded packet inside a std_logic_vector, a mas
 
 https://www.scadacore.com/tools/programming-calculators/online-checksum-calculator/
 
+http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
 
 Obviously, I spent a lot of time debugging. I did not know what the frame was supposed to look like, the one I was looking at during simulation seemed correct. It was not. My FPGA was connected to my computer, sending frames every two seconds, but wireshark was empty. Not a packet in sight. It made it very difficult to find what was the problem. Hopefully, I saw in [this video](https://youtu.be/zTsHbEIOM2A) a way to see packets in wireshark even if the frame or CRC is wrong. 
 
