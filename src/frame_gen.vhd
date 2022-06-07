@@ -46,8 +46,9 @@ architecture behavioral of frame_gen is
 
 	signal preamble_buf: 		std_logic_vector(PREAMBLE_BYTES*8-1 downto 0) := x"55555555555555";
 	signal sfd_buf: 			std_logic_vector(SFD_BYTES*8-1 downto 0) := x"D5";
-	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0);
-	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0) := x"03030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303";
+	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0); --   
+	-- signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0) :=    x"13030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303";
+	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0) :=    x"31303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030";
 	signal fcs_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 	signal test_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 
@@ -56,6 +57,7 @@ architecture behavioral of frame_gen is
 	signal state: 		t_STATE := IDLE;
 	signal next_state: 	t_STATE := state;
 	signal tx_data: 	std_logic_vector(MII_LEN-1 downto 0);
+	signal tx_data_r: 	std_logic_vector(MII_LEN-1 downto 0);
 	signal tx_e: 		std_logic := '0';
 
 	signal fcs_rst:		std_logic := '1';
@@ -67,6 +69,12 @@ begin
 
 	tx_en <= tx_e;
 	tx_d  <= tx_data;
+	
+	tx_data_r(3) <= tx_data(0);
+	tx_data_r(2) <= tx_data(1);
+	tx_data_r(1) <= tx_data(2);
+	tx_data_r(0) <= tx_data(3);
+	
 
 	process (tx_clk)
 	begin
@@ -92,7 +100,9 @@ begin
 					preamble_buf <= x"55555555555555";
 					sfd_buf <= x"D5";
 					header_buf <= ChangeEndian(tx_header.ip_type) & ChangeEndian(tx_header.mac_src) & ChangeEndian(tx_header.mac_dst);
-
+					-- data_buf <= x"31303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030";
+					data_buf <= x"33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333";
+					
 					tx_e <= '0';
 					en_crc <= '0';
 					fcs_rst <= '0';
@@ -160,6 +170,7 @@ begin
 					-- Change of state
 					if counter = DATA_LEN-1 then
 						next_state <= FCS;
+						fcs_buf <= test_buf;
 					else
 						next_state <= state;
 					end if;
