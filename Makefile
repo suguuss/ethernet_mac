@@ -22,7 +22,7 @@ elab : force
 run : force
 	# $(GHDL) -c $(GHDLFLAGS) -r $(SRC)/$(ETHERNET) $(GHDLRUNFLAGS)
 	$(GHDL) -c $(GHDLFLAGS) -r $(ETHERNET)_tb --wave=$(ETHERNET).ghw
-	$(GHDL) -c $(GHDLFLAGS) -r $(CRC)_tb --wave=$(CRC).ghw
+	# $(GHDL) -c $(GHDLFLAGS) -r $(CRC)_tb --wave=$(CRC).ghw
 
 # Targets to analyze libraries
 init: force

@@ -46,34 +46,28 @@ architecture behavioral of frame_gen is
 
 	signal preamble_buf: 		std_logic_vector(PREAMBLE_BYTES*8-1 downto 0) := x"55555555555555";
 	signal sfd_buf: 			std_logic_vector(SFD_BYTES*8-1 downto 0) := x"D5";
-	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0); --   
-	-- signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0) :=    x"13030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303";
-	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0) :=    x"31303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030";
+	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0);
+	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0);
 	signal fcs_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 	signal test_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 
 
 	type t_STATE is (IDLE, PREAMBLE, SFD, HEADER, DATA, FCS, INTERGAP);
-	signal state: 		t_STATE := IDLE;
-	signal next_state: 	t_STATE := state;
-	signal tx_data: 	std_logic_vector(MII_LEN-1 downto 0);
-	signal tx_data_r: 	std_logic_vector(MII_LEN-1 downto 0);
-	signal tx_e: 		std_logic := '0';
+	signal state: 				t_STATE := IDLE;
+	signal next_state: 			t_STATE := state;
+	signal tx_data: 			std_logic_vector(MII_LEN-1 downto 0);
+	signal tx_e: 				std_logic := '0';
 
-	signal fcs_rst:		std_logic := '1';
-	signal en_crc: 		std_logic := '0';
+	signal fcs_rst:				std_logic := '1';
+	signal en_crc: 				std_logic := '0';
 
-	signal counter: 	integer := 0;
-
+	signal counter: 			integer := 0;
+	
 begin
 
 	tx_en <= tx_e;
 	tx_d  <= tx_data;
 	
-	tx_data_r(3) <= tx_data(0);
-	tx_data_r(2) <= tx_data(1);
-	tx_data_r(1) <= tx_data(2);
-	tx_data_r(0) <= tx_data(3);
 	
 
 	process (tx_clk)
@@ -100,8 +94,12 @@ begin
 					preamble_buf <= x"55555555555555";
 					sfd_buf <= x"D5";
 					header_buf <= ChangeEndian(tx_header.ip_type) & ChangeEndian(tx_header.mac_src) & ChangeEndian(tx_header.mac_dst);
-					-- data_buf <= x"31303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030";
-					data_buf <= x"33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333";
+
+					-- // TODO
+					-- PROBLEM WITH THE LAST BYTE OF data_buf
+					-- DATA HAS TO BE SYMETRIC FOR SOME REASONS
+					-- STILL NEED TO FIX THAT.
+					data_buf     <= x"00ec32761c07b15a42daaee04adfabae8e8a32d994b6be102a438101612373648013fd4cba9ae7fd6ee3ac009897";
 					
 					tx_e <= '0';
 					en_crc <= '0';
@@ -166,7 +164,7 @@ begin
 					tx_e <= '1';
 					en_crc <= '1';
 					fcs_rst <= '1';
-
+					
 					-- Change of state
 					if counter = DATA_LEN-1 then
 						next_state <= FCS;
@@ -204,13 +202,10 @@ begin
 						next_state <= state;
 					end if;
 
-			
 			end case ;
-
 		end if;
 
 	end process;
-
 
 	crc: crc_gen port 
 		map(

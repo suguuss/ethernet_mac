@@ -9,31 +9,31 @@ use work.ethernet_pkg.all;
 entity ethernet is 
 	port (
 		--  CLOCK 
-		MAX10_CLK1_50: 	in 		std_logic;
+		-- MAX10_CLK1_50: 	in 		std_logic;
 		
 		--  KEY 
 		KEY: 			in 		std_logic_vector(1 downto 0);
 		
 		--  LED 
-		LED: 			out 	std_logic_vector(7 downto 0) := b"11111111";
+		-- LED: 			out 	std_logic_vector(7 downto 0) := b"11111111";
 		
 		--  Ethernet 
-		NET_COL:		in		std_logic;
-		NET_CRS:		in 		std_logic;
-		NET_MDC:		out 	std_logic := '0';
-		NET_MDIO:		inout 	std_logic;
-		NET_PCF_EN:		out 	std_logic := '0';
+		-- NET_COL:		in		std_logic;
+		-- NET_CRS:		in 		std_logic;
+		-- NET_MDC:		out 	std_logic := '0';
+		-- NET_MDIO:		inout 	std_logic;
+		-- NET_PCF_EN:		out 	std_logic := '0';
 		NET_RESET_n:	out 	std_logic;
-		NET_RX_CLK:		in 		std_logic;
-		NET_RX_DV:		in 		std_logic;
-		NET_RX_ER:		in 		std_logic;
-		NET_RXD:		in 		std_logic_vector(3 downto 0);
+		-- NET_RX_CLK:		in 		std_logic;
+		-- NET_RX_DV:		in 		std_logic;
+		-- NET_RX_ER:		in 		std_logic;
+		-- NET_RXD:		in 		std_logic_vector(3 downto 0);
 		NET_TX_CLK:		in 		std_logic;
 		NET_TX_EN:		out 	std_logic := '0';
-		NET_TXD:		out 	std_logic_vector(3 downto 0) := x"0";
+		NET_TXD:		out 	std_logic_vector(3 downto 0) := x"0"
 
 		--  SW 
-		SW: 			in 		std_logic_vector(1 downto 0)
+		-- SW: 			in 		std_logic_vector(1 downto 0)
 	);
 end ethernet;
 
@@ -52,7 +52,7 @@ architecture behavioral of ethernet is
 	
 	signal counter: integer := 0;
 	signal go: std_logic := '0';
-	signal header: t_ethernet_header := (mac_dst => x"00D86119493B", mac_src => x"001122334455", ip_type => x"0000");
+	signal header: t_ethernet_header := (mac_dst => x"848f69f02ffd", mac_src => x"001122334455", ip_type => x"0000");
 begin
 
 	process (NET_TX_CLK)

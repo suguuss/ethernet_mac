@@ -40,9 +40,9 @@ architecture test of ethernet_tb is
 	signal d: std_logic_vector(3 downto 0) := "0000";
 	signal rst: std_logic := '1';
 	signal sw: std_logic_vector(1 downto 0) := "00";
+
 begin 
 	uut: ethernet port map(NET_TX_CLK => clk, NET_RESET_n => rst, NET_TXD => d, NET_TX_EN => en, KEY => sw);
-
 
 	process begin
 
