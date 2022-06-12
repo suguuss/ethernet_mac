@@ -19,7 +19,7 @@ architecture behavioral of crc_gen is
 begin
 
 	-- xor on the output
-	crc_out <= lfsr_c xor x"ffffffff";
+	crc_out <= lfsr_q xor x"ffffffff";
 
 	-- -------------------------------------------------------------------------
 	--                              0xEDB88320 (hex)

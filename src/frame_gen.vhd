@@ -62,7 +62,6 @@ architecture behavioral of frame_gen is
 	signal en_crc: 				std_logic := '0';
 
 	signal counter: 			integer := 0;
-	
 begin
 
 	tx_en <= tx_e;
@@ -94,12 +93,7 @@ begin
 					preamble_buf <= x"55555555555555";
 					sfd_buf <= x"D5";
 					header_buf <= ChangeEndian(tx_header.ip_type) & ChangeEndian(tx_header.mac_src) & ChangeEndian(tx_header.mac_dst);
-
-					-- // TODO
-					-- PROBLEM WITH THE LAST BYTE OF data_buf
-					-- DATA HAS TO BE SYMETRIC FOR SOME REASONS
-					-- STILL NEED TO FIX THAT.
-					data_buf     <= x"00ec32761c07b15a42daaee04adfabae8e8a32d994b6be102a438101612373648013fd4cba9ae7fd6ee3ac009897";
+					data_buf   <= x"813f2997d9f4a2236c229170277c46ec7d526770951f947810761f299810b7f8947cd9316fe04768becf3dda8e4f";
 					
 					tx_e <= '0';
 					en_crc <= '0';
@@ -168,14 +162,19 @@ begin
 					-- Change of state
 					if counter = DATA_LEN-1 then
 						next_state <= FCS;
-						fcs_buf <= test_buf;
+						-- fcs_buf <= test_buf;
 					else
 						next_state <= state;
 					end if;
 
 				when FCS =>
-					tx_data <= fcs_buf(MII_LEN-1 downto 0);
-					fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
+					if counter = 0 then
+						tx_data <= test_buf(MII_LEN-1 downto 0);
+						fcs_buf <= std_logic_vector(shift_right(unsigned(test_buf), MII_LEN));
+					else
+						tx_data <= fcs_buf(MII_LEN-1 downto 0);
+						fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
+					end if;
 
 					tx_e <= '1';
 					en_crc <= '0';
