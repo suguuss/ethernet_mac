@@ -49,8 +49,7 @@ architecture behavioral of frame_gen is
 	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0);
 	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0);
 	signal fcs_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
-	signal test_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
-
+	signal crc_out_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 
 	type t_STATE is (IDLE, PREAMBLE, SFD, HEADER, DATA, FCS, INTERGAP);
 	signal state: 				t_STATE := IDLE;
@@ -67,8 +66,6 @@ begin
 	tx_en <= tx_e;
 	tx_d  <= tx_data;
 	
-	
-
 	process (tx_clk)
 	begin
 		if rising_edge(tx_clk) then
@@ -162,15 +159,14 @@ begin
 					-- Change of state
 					if counter = DATA_LEN-1 then
 						next_state <= FCS;
-						-- fcs_buf <= test_buf;
 					else
 						next_state <= state;
 					end if;
 
 				when FCS =>
 					if counter = 0 then
-						tx_data <= test_buf(MII_LEN-1 downto 0);
-						fcs_buf <= std_logic_vector(shift_right(unsigned(test_buf), MII_LEN));
+						tx_data <= crc_out_buf(MII_LEN-1 downto 0);
+						fcs_buf <= std_logic_vector(shift_right(unsigned(crc_out_buf), MII_LEN));
 					else
 						tx_data <= fcs_buf(MII_LEN-1 downto 0);
 						fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
@@ -212,7 +208,7 @@ begin
 			rst => fcs_rst,
 			crc_en => en_crc,
 			data_in => tx_data,
-			crc_out => test_buf
+			crc_out => crc_out_buf
 		);
 
 
