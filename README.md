@@ -1,7 +1,3 @@
----
-layout: default
----
-
 # Introduction
 
 bla bla bla
@@ -145,4 +141,6 @@ Obviously, I spent a lot of time debugging. I did not know what the frame was su
 ```
 
 Usually the NIC will not give you the FCS/CRC. The first command let's you see the CRC inside wireshark which is really helpful. The second line let's you receive any frame, even if they are not addressed to you. Also very useful, especially if the error is in the destination address.
+
+## Building a packet generator
 
