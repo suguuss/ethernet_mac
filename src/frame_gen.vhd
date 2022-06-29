@@ -49,7 +49,7 @@ architecture behavioral of frame_gen is
 	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0);
 	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0);
 	signal fcs_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
-	signal crc_out_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
+	signal crc_out_buf: 		std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 
 	type t_STATE is (IDLE, PREAMBLE, SFD, HEADER, DATA, FCS, INTERGAP);
 	signal state: 				t_STATE := IDLE;

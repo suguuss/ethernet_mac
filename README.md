@@ -144,3 +144,10 @@ Usually the NIC will not give you the FCS/CRC. The first command let's you see t
 
 ## Building a packet generator
 
+Once I was able to send a packet without errors, it was time to build a more complex FSM. The goal right now is to be able to send any data via ethernet with any destination and source address, not just a hardcoded packet. 
+
+The state machine went from 2 states (IDLE, SENDING) to 7 states (IDLE, PREAMBLE, SFD, HEADER, DATA, FCS, INTERGAP).
+
+The hardest part of this was to generate the right FCS. For this I used this website : https://bues.ch/cms/hacking/crcgen. This will give you a module which is gonna generate the CRC for you. I had trouble getting the right timing for the last nibble.
+
+With this addition, I can send any data to and from any address. However, the data is still hardcoded. The next step is to build a FIFO and to fill it up with data.
