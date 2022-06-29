@@ -87,11 +87,91 @@ The complete frame we are gonna send later is going to look like the one in the 
 
 
 
+
 # MII
 
-**Describe the MII interface**
-- Talk about the byte order
-- Talk about the bit order
+The **M**edia-**I**ndependant-**I**nterface connects a MAC (layer 2) to a PHY chip (layer 1). Because the MII is Media-Independant, any MAC can be used with any PHY, without modification. You can read more about MII on [Wikipedia](https://en.wikipedia.org/wiki/Media-independent_interface).
+
+
+## Pinout
+
+**Transmitter signals**
+
+[cols="1,1,1"] 
+|===
+|Signal name |Description |Direction
+
+|TX_CLK
+|Transmit clock
+|PHY TO MAC
+
+|TXD0
+|Transmit data bit 0 (transmitted first)
+|MAC TO PHY
+
+|TXD1
+|Transmit data bit 1
+|MAC TO PHY
+
+|TXD2
+|Transmit data bit 2
+|MAC TO PHY
+
+|TXD3
+|Transmit data bit 3
+|MAC TO PHY
+
+|TX_EN
+|Transmit enable
+|MAC TO PHY
+
+|TX_ER
+|Transmit error (optional)
+|MAC TO PHY
+|===
+
+**Receiver signals**
+
+[cols="1,1,1"] 
+|===
+|Signal name |Description |Direction
+
+|RX_CLK
+|Receive clock
+|PHY TO MAC
+
+|RXD0
+|Receive data bit 0 (Received first)
+|PHY TO MAC
+
+|RXD1
+|Receive data bit 1
+|PHY TO MAC
+
+|RXD2
+|Receive data bit 2
+|PHY TO MAC
+
+|RXD3
+|Receive data bit 3
+|PHY TO MAC
+
+|RX_DV
+|Receive data valid
+|PHY TO MAC
+
+|RX_ER
+|Receive error (optional)
+|PHY TO MAC
+
+|CRS
+|Carrier sense
+|PHY TO MAC
+
+|COL
+|Collision detect
+|PHY TO MAC
+|===
 
 # Sending a packet
 
@@ -116,3 +196,4 @@ Obviously, I spent a lot of time debugging. I did not know what the frame was su
 ```
 
 Usually the NIC will not give you the FCS/CRC. The first command let's you see the CRC inside wireshark which is really helpful. The second line let's you receive any frame, even if they are not addressed to you. Also very useful, especially if the error is in the destination address.
+
