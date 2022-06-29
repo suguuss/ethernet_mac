@@ -92,86 +92,35 @@ The complete frame we are gonna send later is going to look like the one in the 
 
 The **M**edia-**I**ndependant-**I**nterface connects a MAC (layer 2) to a PHY chip (layer 1). Because the MII is Media-Independant, any MAC can be used with any PHY, without modification. You can read more about MII on [Wikipedia](https://en.wikipedia.org/wiki/Media-independent_interface).
 
+It is important to remember that the bit transmission order is **Least significant bit first**. For example, the premable (0xAAAAAAAAAAAAAA) should be sent as : 0x55555555555555. 
 
 ## Pinout
 
 **Transmitter signals**
 
-[cols="1,1,1"] 
-|===
-|Signal name |Description |Direction
-
-|TX_CLK
-|Transmit clock
-|PHY TO MAC
-
-|TXD0
-|Transmit data bit 0 (transmitted first)
-|MAC TO PHY
-
-|TXD1
-|Transmit data bit 1
-|MAC TO PHY
-
-|TXD2
-|Transmit data bit 2
-|MAC TO PHY
-
-|TXD3
-|Transmit data bit 3
-|MAC TO PHY
-
-|TX_EN
-|Transmit enable
-|MAC TO PHY
-
-|TX_ER
-|Transmit error (optional)
-|MAC TO PHY
-|===
+| Signal name  |               Description                |  Direction  |
+|:------------:|:----------------------------------------:|:-----------:|
+| TX_CLK       | Transmit clock                           | PHY to MAC  |
+| TXD0         | Transmit data bit 0 (transmitted first)  | MAC to PHY  |
+| TXD1         | Transmit data bit 1                      | MAC to PHY  |
+| TXD2         | Transmit data bit 2                      | MAC to PHY  |
+| TXD3         | Transmit data bit 3                      | MAC to PHY  |
+| TX_EN        | Transmit enable                          | MAC to PHY  |
+| TX_ER        | Transmit error (optional)                | MAC to PHY  |
 
 **Receiver signals**
 
-[cols="1,1,1"] 
-|===
-|Signal name |Description |Direction
-
-|RX_CLK
-|Receive clock
-|PHY TO MAC
-
-|RXD0
-|Receive data bit 0 (Received first)
-|PHY TO MAC
-
-|RXD1
-|Receive data bit 1
-|PHY TO MAC
-
-|RXD2
-|Receive data bit 2
-|PHY TO MAC
-
-|RXD3
-|Receive data bit 3
-|PHY TO MAC
-
-|RX_DV
-|Receive data valid
-|PHY TO MAC
-
-|RX_ER
-|Receive error (optional)
-|PHY TO MAC
-
-|CRS
-|Carrier sense
-|PHY TO MAC
-
-|COL
-|Collision detect
-|PHY TO MAC
-|===
+| Signal name  |             Description              |  Direction  |
+|:------------:|:------------------------------------:|:-----------:|
+| RX_CLK       | Receive clock                        | PHY to MAC  |
+| RXD0         | Receive data bit 0 (received first)  | PHY to MAC  |
+| RXD1         | Receive data bit 1                   | PHY to MAC  |
+| RXD2         | Receive data bit 2                   | PHY to MAC  |
+| RXD3         | Receive data bit 3                   | PHY to MAC  |
+| RX_DV        | Receive data valid                   | PHY to MAC  |
+| RX_ER        | Receive error                        | PHY to MAC  |
+| CRS          | Carrier sense                        | PHY to MAC  |
+| COL          | Collision detect                     | PHY to MAC  |
 
 # Sending a packet
 
