@@ -5,6 +5,9 @@ use ieee.numeric_std.all;
 use work.ethernet_pkg.all;
 
 entity frame_gen is
+	generic (
+		DATA_BYTES: integer := 46
+	);
 	port (
 		tx_clk: 	in		std_logic;
 		rst_n:		in		std_logic;
@@ -33,7 +36,7 @@ architecture behavioral of frame_gen is
 	constant PREAMBLE_BYTES: 	integer := 7;
 	constant SFD_BYTES: 		integer := 1;
 	constant HEADER_BYTES: 		integer := 14;
-	constant DATA_BYTES: 		integer := 46;
+	-- constant DATA_BYTES: 		integer := data_bytes;
 	constant FCS_BYTES: 		integer := 4;
 	constant INTERGAP_BYTES: 	integer := 12;
 
