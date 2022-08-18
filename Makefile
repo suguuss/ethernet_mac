@@ -3,7 +3,7 @@ FRAME_GEN=frame_gen
 CRC=crc_gen
 FIFO=fifo
 
-UUT=FIFO
+UUT=ETHERNET
 
 SRC=src
 TB=tb

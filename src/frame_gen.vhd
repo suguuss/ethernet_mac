@@ -11,15 +11,31 @@ entity frame_gen is
 	port (
 		tx_clk: 	in		std_logic;
 		rst_n:		in		std_logic;
-		tx_send:	in		std_logic;
+		fifo_w_en:	in		std_logic;
+		fifo_din:	in		std_logic_vector(3 downto 0);
 		tx_header:  in		t_ethernet_header;
 
 		tx_en: 		out 	std_logic := '1';
 		tx_d:		out 	std_logic_vector(3 downto 0)
-	) ;
+	);
 end frame_gen;
 
 architecture behavioral of frame_gen is
+	component fifo
+		generic (
+			FIFO_SIZE: integer := 2*DATA_BYTES
+		);
+		port (
+			clk: 		in 		std_logic;
+			rst_n: 		in 		std_logic;
+			enable: 	in 		std_logic;
+			write_en: 	in 		std_logic;
+			data_in: 	in 		std_logic_vector(3 downto 0);
+			data_out: 	out 	std_logic_vector(3 downto 0);
+			full: 		out 	std_logic
+		);
+	end component;
+
 	component crc_gen 
 		port (
 			clk: 		in 		std_logic;
@@ -64,13 +80,26 @@ architecture behavioral of frame_gen is
 	signal en_crc: 				std_logic := '0';
 
 	signal counter: 			integer := 0;
+
+	-- FIFO SIGNALS
+	signal fifo_full: 			std_logic := '0';
+	signal fifo_en:		 		std_logic := '0';
+	signal fifo_dout: 			std_logic_vector(3 downto 0) := x"0";
 begin
 
 	tx_en <= tx_e;
 	tx_d  <= tx_data;
+
 	
 	process (tx_clk)
 	begin
+
+		if fifo_w_en = '1' or state = DATA then
+			fifo_en <= '1';
+		else
+			fifo_en <= '0';
+		end if;
+
 		if rising_edge(tx_clk) then
 			-- GOES BACK TO IDLE STATE WHEN RST
 			if rst_n = '0' then
@@ -100,7 +129,7 @@ begin
 					fcs_rst <= '0';
 
 					-- Change of state
-					if tx_send = '1' then
+					if fifo_full = '1' then
 						next_state <= PREAMBLE;
 					else
 						next_state <= state;
@@ -152,9 +181,9 @@ begin
 					end if;
 
 				when DATA =>
-					tx_data <= data_buf(MII_LEN-1 downto 0);
-					data_buf <= std_logic_vector(shift_right(unsigned(data_buf), MII_LEN));
-
+					-- tx_data <= data_buf(MII_LEN-1 downto 0);
+					-- data_buf <= std_logic_vector(shift_right(unsigned(data_buf), MII_LEN));
+					tx_data <= fifo_dout;
 					tx_e <= '1';
 					en_crc <= '1';
 					fcs_rst <= '1';
@@ -200,10 +229,22 @@ begin
 						next_state <= state;
 					end if;
 
-			end case ;
+			end case;
 		end if;
 
 	end process;
+
+	send_fifo: fifo port
+		map(
+			clk => tx_clk,
+			rst_n => rst_n,
+			enable => fifo_en,
+			write_en => fifo_w_en,
+			data_in => fifo_din,
+			data_out => fifo_dout,
+			full => fifo_full
+		);
+
 
 	crc: crc_gen port 
 		map(

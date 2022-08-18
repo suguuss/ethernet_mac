@@ -8,23 +8,23 @@ end fifo_tb;
 architecture test of fifo_tb is
 	component fifo
 		generic (
-			FIFO_SIZE: integer := 46
+			FIFO_SIZE: integer := 92
 		);
 		port (
 			clk: 		in 		std_logic;
-			rst: 		in 		std_logic;
+			rst_n: 		in 		std_logic;
 			enable: 	in 		std_logic;
 			write_en: 	in 		std_logic;
-			data_in: 	in 		std_logic_vector(7 downto 0);
-			data_out: 	out 	std_logic_vector(7 downto 0);
+			data_in: 	in 		std_logic_vector(3 downto 0);
+			data_out: 	out 	std_logic_vector(3 downto 0);
 			full: 		out 	std_logic
 		);
 	end component;
 
 	signal clk, en, full: 	std_logic := '0';
 	signal rst, rw:			std_logic := '0';
-	signal data_in:			std_logic_vector(7 downto 0) := (others => '0');
-	signal data_out:		std_logic_vector(7 downto 0) := (others => '0');
+	signal data_in:			std_logic_vector(3 downto 0) := (others => '0');
+	signal data_out:		std_logic_vector(3 downto 0) := (others => '0');
 begin 
 	uut: fifo 
 	generic map (
@@ -32,7 +32,7 @@ begin
 	)
 	port map(
 		clk => clk,
-		rst => rst,
+		rst_n => rst,
 		enable => en,
 		write_en => rw,
 		data_in => data_in,
@@ -42,6 +42,8 @@ begin
 
 
 	process begin
+
+		rst <= '1';
 
 		wait for 10 ns;
 
