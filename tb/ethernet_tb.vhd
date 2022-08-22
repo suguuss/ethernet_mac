@@ -23,10 +23,10 @@ architecture test of ethernet_tb is
 			-- NET_MDIO:		inout 	std_logic;
 			-- NET_PCF_EN:		out 	std_logic;
 			NET_RESET_n:	out 	std_logic;
-			-- NET_RX_CLK:		in 		std_logic;
-			-- NET_RX_DV:		in 		std_logic;
+			NET_RX_CLK:		in 		std_logic;
+			NET_RX_DV:		in 		std_logic;
 			-- NET_RX_ER:		in 		std_logic;
-			-- NET_RXD:		in 		std_logic_vector(3 downto 0);
+			NET_RXD:		in 		std_logic_vector(3 downto 0);
 			NET_TX_CLK:		in 		std_logic;
 			NET_TX_EN:		out 	std_logic;
 			NET_TXD:		out 	std_logic_vector(3 downto 0)
@@ -36,28 +36,49 @@ architecture test of ethernet_tb is
 		);
 	end component;
 
-	signal clk, en: std_logic := '1';
+	signal clk,en: std_logic := '1';
 	signal d: std_logic_vector(3 downto 0) := "0000";
 	signal rst: std_logic := '1';
 	signal sw: std_logic_vector(1 downto 0) := "00";
+	signal dv: std_logic := '0';
+	signal rxd: std_logic_vector(3 downto 0) := x"0";
+	signal mac: std_logic_vector(6*8-1 downto 0) := x"112233445566";
+
+	signal frame : std_logic_vector(72*8-1 downto 0) := X"555555555555555D001122334455008D169194B3000003030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303AF78CA05";
 
 begin 
-	uut: ethernet port map(NET_TX_CLK => clk, NET_RESET_n => rst, NET_TXD => d, NET_TX_EN => en, KEY => sw);
+	uut: ethernet port map(
+		NET_TX_CLK => clk,
+		NET_RX_CLK => clk,
+		NET_RX_DV => dv,
+		NET_RXD => rxd,
+		NET_RESET_n => rst,
+		NET_TXD => d,
+		NET_TX_EN => en,
+		KEY => sw
+		);
 
 	process begin
-
-			sw <= b"00";
-			clk <= '0'; wait for 1 ns;
-			clk <= '1'; wait for 1 ns;
-			sw <= b"01";
-			clk <= '0'; wait for 1 ns;
-			clk <= '1'; wait for 1 ns;
+			-- rxd <= x"d";
+			dv <= '1';
+			-- sw <= b"00";
+			-- clk <= '0'; wait for 1 ns;
+			-- clk <= '1'; wait for 1 ns;
+			-- sw <= b"01";
+			-- clk <= '0'; wait for 1 ns;
+			-- clk <= '1'; wait for 1 ns;
 			sw <= b"11";
 
+
+
 		for i in 0 to 750 loop
+			rxd <= frame(72*8-1 downto 72*8-4);
 			clk <= '0'; wait for 1 ns;
+			frame <= frame(72*8-5 downto 0) & x"0";
 			clk <= '1'; wait for 1 ns;
 		end loop;
+
+		dv <= '0';
 
 		-- sw <= "01";
 

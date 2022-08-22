@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity fifo is
+entity rx_fifo is
 	generic (
 		FIFO_SIZE: integer := 92
 	);
@@ -15,9 +15,9 @@ entity fifo is
 		data_out: 	out 	std_logic_vector(3 downto 0) := (others => '0');
 		full: 		out 	std_logic := '0'
 	);
-end fifo;
+end rx_fifo;
 
-architecture behavioral of fifo is
+architecture behavioral of rx_fifo is
 
 	constant BYTE_SIZE: integer :=  4;
 
@@ -27,7 +27,7 @@ architecture behavioral of fifo is
 
 begin
 
-	data_out <= fifo_data(3 downto 0);
+	data_out <= fifo_data(BYTE_SIZE*FIFO_SIZE-1 downto BYTE_SIZE*FIFO_SIZE-4);
 
 	process (clk)
 	begin
@@ -48,14 +48,14 @@ begin
 				if write_en = '1' then
 					if enable = '1' and buffer_full = '0' then
 						counter <= counter + 1;
-						fifo_data <= data_in & fifo_data(BYTE_SIZE*FIFO_SIZE-1 downto 4);
+						fifo_data <= fifo_data(BYTE_SIZE*FIFO_SIZE-5 downto 0) & data_in;
 					end if;
 				else
 					if enable = '1' then
 						if counter > 0 then
 							counter <= counter - 1;
 						end if;
-						fifo_data <= x"0" & fifo_data(BYTE_SIZE*FIFO_SIZE-1 downto 4);
+						fifo_data <= fifo_data(BYTE_SIZE*FIFO_SIZE-5 downto 0) & x"0";
 					end if;
 				end if;
 			end if;

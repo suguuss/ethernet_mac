@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.ethernet_pkg.all;
 
-entity frame_gen is
+entity ethernet_tx is
 	generic (
 		DATA_BYTES: integer := 46
 	);
@@ -18,10 +18,10 @@ entity frame_gen is
 		tx_en: 		out 	std_logic := '1';
 		tx_d:		out 	std_logic_vector(3 downto 0)
 	);
-end frame_gen;
+end ethernet_tx;
 
-architecture behavioral of frame_gen is
-	component fifo
+architecture behavioral of ethernet_tx is
+	component rx_fifo
 		generic (
 			FIFO_SIZE: integer := 2*DATA_BYTES
 		);
@@ -66,7 +66,7 @@ architecture behavioral of frame_gen is
 	signal preamble_buf: 		std_logic_vector(PREAMBLE_BYTES*8-1 downto 0) := x"55555555555555";
 	signal sfd_buf: 			std_logic_vector(SFD_BYTES*8-1 downto 0) := x"D5";
 	signal header_buf: 			std_logic_vector(HEADER_BYTES*8-1 downto 0);
-	signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0);
+	-- signal data_buf: 			std_logic_vector(DATA_BYTES*8-1 downto 0);
 	signal fcs_buf: 			std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 	signal crc_out_buf: 		std_logic_vector(FCS_BYTES*8-1 downto 0) := x"00000000";
 
@@ -122,7 +122,7 @@ begin
 					preamble_buf <= x"55555555555555";
 					sfd_buf <= x"D5";
 					header_buf <= ChangeEndian(tx_header.ip_type) & ChangeEndian(tx_header.mac_src) & ChangeEndian(tx_header.mac_dst);
-					data_buf   <= x"813f2997d9f4a2236c229170277c46ec7d526770951f947810761f299810b7f8947cd9316fe04768becf3dda8e4f";
+					-- data_buf   <= x"813f2997d9f4a2236c229170277c46ec7d526770951f947810761f299810b7f8947cd9316fe04768becf3dda8e4f";
 					
 					tx_e <= '0';
 					en_crc <= '0';
@@ -234,7 +234,7 @@ begin
 
 	end process;
 
-	send_fifo: fifo port
+	send_fifo: rx_fifo port
 		map(
 			clk => tx_clk,
 			rst_n => rst_n,
@@ -256,4 +256,4 @@ begin
 		);
 
 
-end behavioral ; -- frame_gen
+end behavioral ; -- ethernet_tx

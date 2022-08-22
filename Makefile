@@ -1,7 +1,8 @@
 ETHERNET=ethernet
-FRAME_GEN=frame_gen
+FRAME_GEN=ethernet_tx
 CRC=crc_gen
-FIFO=fifo
+TXFIFO=tx_fifo
+RXFIFO=rx_fifo
 
 UUT=ETHERNET
 
@@ -40,8 +41,9 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(CRC).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(CRC)_tb.vhd
 	
-	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(FIFO).vhd
-	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(FIFO)_tb.vhd
+	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(TXFIFO).vhd
+	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(RXFIFO).vhd
+	# $(GHDL) -a $(GHDLFLAGS) $(TB)/$(FIFO)_tb.vhd
 
 gtk: run
 	gtkwave $(ETHERNET).ghw
