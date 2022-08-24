@@ -60,7 +60,6 @@ begin
 
 	process begin
 			-- rxd <= x"d";
-			dv <= '1';
 			-- sw <= b"00";
 			-- clk <= '0'; wait for 1 ns;
 			-- clk <= '1'; wait for 1 ns;
@@ -70,15 +69,31 @@ begin
 			sw <= b"11";
 
 
-
+		dv <= '1';
 		for i in 0 to 750 loop
 			rxd <= frame(72*8-1 downto 72*8-4);
 			clk <= '0'; wait for 1 ns;
 			frame <= frame(72*8-5 downto 0) & x"0";
 			clk <= '1'; wait for 1 ns;
+
+			if i > 150 then
+				dv <= '0';
+			end if;
 		end loop;
 
-		dv <= '0';
+		frame <= X"555555555555555D001122334455008D169194B3000003030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303AF78CA05";
+		dv <= '1';
+		for i in 0 to 750 loop
+			rxd <= frame(72*8-1 downto 72*8-4);
+			clk <= '0'; wait for 1 ns;
+			frame <= frame(72*8-5 downto 0) & x"0";
+			clk <= '1'; wait for 1 ns;
+
+			if i > 150 then
+				dv <= '0';
+			end if;
+		end loop;
+
 
 		-- sw <= "01";
 

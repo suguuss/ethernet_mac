@@ -24,13 +24,19 @@ architecture behavioral of rx_fifo is
 	signal counter: 	integer := 0;
 	signal fifo_data: 	std_logic_vector(BYTE_SIZE*FIFO_SIZE-1 downto 0) := (3 downto 0 => '1', others => '0');
 	signal buffer_full: std_logic := '0';
-
+	signal en:			std_logic := '0';
 begin
 
 	data_out <= fifo_data(BYTE_SIZE*FIFO_SIZE-1 downto BYTE_SIZE*FIFO_SIZE-4);
 
 	process (clk)
 	begin
+		if write_en = '1' then
+			en <= '1';
+		else
+			en <= enable;
+		end if;
+
 		if rising_edge(clk) then
 			-- CHECK IF BUFFER IS FULL
 			if counter >= (FIFO_SIZE-1) then
@@ -46,12 +52,12 @@ begin
 				buffer_full <= '0';
 			else
 				if write_en = '1' then
-					if enable = '1' and buffer_full = '0' then
+					if en = '1' and buffer_full = '0' then
 						counter <= counter + 1;
 						fifo_data <= fifo_data(BYTE_SIZE*FIFO_SIZE-5 downto 0) & data_in;
 					end if;
 				else
-					if enable = '1' then
+					if en = '1' then
 						if counter > 0 then
 							counter <= counter - 1;
 						end if;

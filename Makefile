@@ -1,5 +1,6 @@
 ETHERNET=ethernet
 FRAME_GEN=ethernet_tx
+ETHERNET_RX=ethernet_rx
 CRC=crc_gen
 TXFIFO=tx_fifo
 RXFIFO=rx_fifo
@@ -37,6 +38,7 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(ETHERNET)_tb.vhd
 
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(FRAME_GEN).vhd
+	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(ETHERNET_RX).vhd
 
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(CRC).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(CRC)_tb.vhd
