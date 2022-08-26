@@ -5,7 +5,7 @@ from time import sleep
 
 MAC_DST			= "00:11:22:33:44:55"
 INTERFACE_ID 	= 3
-SEND_COUNT			= 1
+SEND_COUNT		= 1
 
 
 def send():
