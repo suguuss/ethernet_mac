@@ -37,7 +37,7 @@ architecture behavioral of ethernet_rx is
 		);
 	end component;
 
-	type t_STATE is (IDLE, MAC_DST, MAC_SRC, DATA, DONE);
+	type t_STATE is (IDLE, MAC_DST, MAC_SRC, PKT_TYPE, DATA, DONE);
 	signal state: 				t_STATE := IDLE;
 	signal next_state: 			t_STATE := IDLE;
 
@@ -49,7 +49,6 @@ architecture behavioral of ethernet_rx is
 
 	-- FIFO SIGNALS
 	signal fifo_full: 			std_logic := '0';
-	-- signal fifo_en:		 		std_logic := '0';
 	signal fifo_w_en:		 	std_logic := '0';
 	signal fifo_dout: 			std_logic_vector(3 downto 0) := x"0";
 	signal fifo_din: 			std_logic_vector(3 downto 0) := x"0";
@@ -83,11 +82,12 @@ begin
 						dst_mac <= dst_mac(48-5 downto 0) & rx_d;
 
 						if dst_mac(48-5 downto 0) & rx_d = MAC_ADDRESS then
+						-- if dst_mac = MAC_ADDRESS then
 							next_state <= MAC_SRC;
 							counter <= 0;
 						end if;
 
-						if counter > 12 then 
+						if counter >= 12 then 
 							counter <= 0;
 							next_state <= DONE;
 						end if;
@@ -96,7 +96,15 @@ begin
 						counter <= counter + 1;
 						src_mac <= src_mac(48-5 downto 0) & rx_d;
 
-						if counter > 12 then 
+						if counter >= 12 then 
+							counter <= 0;
+							next_state <= PKT_TYPE;
+						end if;
+
+					when PKT_TYPE =>
+						counter <= counter + 1;
+
+						if counter >= 2 then 
 							counter <= 0;
 							next_state <= DATA;
 						end if;
@@ -106,7 +114,8 @@ begin
 						fifo_w_en <= '1';
 						fifo_din <= rx_d;
 
-						if counter >= 92 then
+						--if counter >= 200 then
+						if fifo_full = '1' then
 							next_state <= DONE;
 							pkt_ready <= '1';
 						end if;

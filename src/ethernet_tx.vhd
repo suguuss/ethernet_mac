@@ -189,7 +189,7 @@ begin
 					fcs_rst <= '1';
 					
 					-- Change of state
-					if counter = DATA_LEN-1 then
+					if counter > DATA_LEN-1 then
 						next_state <= FCS;
 					else
 						next_state <= state;

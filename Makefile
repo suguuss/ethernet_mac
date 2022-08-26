@@ -1,11 +1,11 @@
 ETHERNET=ethernet
-FRAME_GEN=ethernet_tx
+ETHERNET_TX=ethernet_tx
 ETHERNET_RX=ethernet_rx
 CRC=crc_gen
 TXFIFO=tx_fifo
 RXFIFO=rx_fifo
 
-UUT=ETHERNET
+UUT=$(ETHERNET)
 
 SRC=src
 TB=tb
@@ -19,8 +19,8 @@ all : init elab
 
 # Elaborate target.  Almost useless
 elab : force
-	$(GHDL) -c $(GHDLFLAGS) -e $(ETHERNET)
-	$(GHDL) -c $(GHDLFLAGS) -e $(CRC)
+	# $(GHDL) -c $(GHDLFLAGS) -e $(ETHERNET)
+	# $(GHDL) -c $(GHDLFLAGS) -e $(CRC)
 
 # Run target
 run : force
@@ -37,7 +37,7 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(ETHERNET).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(ETHERNET)_tb.vhd
 
-	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(FRAME_GEN).vhd
+	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(ETHERNET_TX).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(ETHERNET_RX).vhd
 
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(CRC).vhd
@@ -45,7 +45,7 @@ init: force
 	
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(TXFIFO).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(RXFIFO).vhd
-	# $(GHDL) -a $(GHDLFLAGS) $(TB)/$(FIFO)_tb.vhd
+	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(RXFIFO)_tb.vhd
 
 gtk: run
 	gtkwave $(ETHERNET).ghw

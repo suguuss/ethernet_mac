@@ -114,7 +114,7 @@ begin
 					fifo_w_en <= '1';
 					fifo_en <= '1';
 
-					if counter > 92 then
+					if counter > 200 then
 						next_state <= IDLE;
 					end if;
 
@@ -124,8 +124,11 @@ begin
 	end process;
 
 
-	eth_rx: ethernet_rx port
-		map(
+	eth_rx: ethernet_rx 
+		generic map(
+			DATA_BYTES => 100
+		)
+		port map(
 			rx_clk => NET_RX_CLK,
 			rst_n => KEY(1),
 			rx_d => NET_RXD,
@@ -135,8 +138,11 @@ begin
 			pkt_ready => pkt_rdy
 		);
 
-	eth_tx: ethernet_tx port 
-		map(
+	eth_tx: ethernet_tx 
+		generic map(
+			DATA_BYTES => 100
+		)
+		port map(
 			tx_clk => NET_TX_CLK,
 			rst_n => KEY(1),
 			fifo_w_en => fifo_w_en,

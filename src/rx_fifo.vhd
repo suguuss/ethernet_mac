@@ -39,7 +39,7 @@ begin
 
 		if rising_edge(clk) then
 			-- CHECK IF BUFFER IS FULL
-			if counter >= (FIFO_SIZE-1) then
+			if counter > (FIFO_SIZE-2) then
 				full <= '1';
 				buffer_full <= '1';
 			else
