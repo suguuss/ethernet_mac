@@ -1,3 +1,4 @@
 *.ghw
 *.cf
 Makefile
+doc.md
