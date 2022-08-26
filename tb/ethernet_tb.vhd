@@ -5,7 +5,7 @@ entity ethernet_tb is
 end ethernet_tb;
 
 architecture test of ethernet_tb is
-	component ethernet
+	component ethernet_top
 		port (
 			--  CLOCK 
 			-- MAX10_CLK1_50: 	in 		std_logic;
@@ -47,7 +47,7 @@ architecture test of ethernet_tb is
 	signal frame : std_logic_vector(126*8-1 downto 0) := X"555555555555555D001122334455008D169194B3000014243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454AF78CA05";
 
 begin 
-	uut: ethernet port map(
+	uut: ethernet_top port map(
 		NET_TX_CLK => clk,
 		NET_RX_CLK => clk,
 		NET_RX_DV => dv,

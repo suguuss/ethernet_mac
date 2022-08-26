@@ -7,7 +7,7 @@ use work.ethernet_pkg.all;
 entity ethernet_rx is
 	generic (
 		DATA_BYTES: 		integer := 46;
-		MAC_ADDRESS:		std_logic_vector(48-1 downto 0) := x"001122334455"
+		MAC_SOURCE:			std_logic_vector(48-1 downto 0) := x"001122334455"
 	);
 	port (
 		rx_clk: 	in		std_logic;
@@ -22,9 +22,9 @@ entity ethernet_rx is
 end ethernet_rx;
 
 architecture behavioral of ethernet_rx is
-	component rx_fifo
+	component fifo
 		generic (
-			FIFO_SIZE: integer := 2*DATA_BYTES
+			FIFO_SIZE: integer := DATA_BYTES
 		);
 		port (
 			clk: 		in 		std_logic;
@@ -81,8 +81,7 @@ begin
 						counter <= counter + 1;
 						dst_mac <= dst_mac(48-5 downto 0) & rx_d;
 
-						if dst_mac(48-5 downto 0) & rx_d = MAC_ADDRESS then
-						-- if dst_mac = MAC_ADDRESS then
+						if dst_mac(48-5 downto 0) & rx_d = MAC_SOURCE then
 							next_state <= MAC_SRC;
 							counter <= 0;
 						end if;
@@ -114,7 +113,6 @@ begin
 						fifo_w_en <= '1';
 						fifo_din <= rx_d;
 
-						--if counter >= 200 then
 						if fifo_full = '1' then
 							next_state <= DONE;
 							pkt_ready <= '1';
@@ -132,7 +130,7 @@ begin
 		end if;
 	end process;
 
-	receive_fifo: rx_fifo port
+	receive_fifo: fifo port
 		map(
 			clk => rx_clk,
 			rst_n => rst_n,

@@ -6,34 +6,27 @@ library work;
 use work.ethernet_pkg.all;
 
 
-entity ethernet is 
+entity ethernet is
+	generic (
+		PACKET_DATA_SIZE: 		integer := 100;
+		MAC_SOURCE: 			std_logic_vector(47 downto 0) := x"001122334455";
+		MAC_DESTINATION: 		std_logic_vector(47 downto 0) := x"00D86119493B"
+	);
 	port (
-		--  CLOCK 
-		-- MAX10_CLK1_50: 	in 		std_logic;
+		eth_rst_n:		in 		std_logic := '0';
 		
-		--  KEY 
-		KEY: 			in 		std_logic_vector(1 downto 0);
-		
-		--  LED 
-		LED: 			out 	std_logic_vector(7 downto 0) := b"11111111";
-		
-		--  Ethernet 
-		NET_COL:		in		std_logic := '0';
-		NET_CRS:		in 		std_logic := '0';
-		NET_MDC:		out 	std_logic := '0';
-		NET_MDIO:		inout 	std_logic := '0';
-		NET_PCF_EN:		out 	std_logic := '0';
-		NET_RESET_n:	out 	std_logic := '0';
-		NET_RX_CLK:		in 		std_logic := '0';
-		NET_RX_DV:		in 		std_logic := '0';
-		NET_RX_ER:		in 		std_logic := '0';
-		NET_RXD:		in 		std_logic_vector(3 downto 0);
-		NET_TX_CLK:		in 		std_logic := '0';
-		NET_TX_EN:		out 	std_logic := '0';
-		NET_TXD:		out 	std_logic_vector(3 downto 0) := x"0"
+		rx_clk:			in 		std_logic := '0';
+		rx_dv:			in 		std_logic := '0';
+		rxd:			in 		std_logic_vector(3 downto 0);
+		rx_fifo_en:		in	 	std_logic;
+		rx_fifo_dout: 	out		std_logic_vector(3 downto 0);
+		rx_pkt_rdy:		out 	std_logic;
 
-		--  SW 
-		-- SW: 			in 		std_logic_vector(1 downto 0)
+		tx_clk:			in 		std_logic := '0';
+		tx_en:			out 	std_logic := '0';
+		txd:			out 	std_logic_vector(3 downto 0) := x"0";
+		tx_fifo_w_en:	in		std_logic;
+		tx_fifo_din:	in		std_logic_vector(3 downto 0) := x"0"
 	);
 end ethernet;
 
@@ -57,7 +50,7 @@ architecture behavioral of ethernet is
 	component ethernet_rx
 		generic (
 			DATA_BYTES: 		integer := 46;
-			MAC_ADDRESS:		std_logic_vector(48-1 downto 0) := x"001122334455"
+			MAC_SOURCE:			std_logic_vector(48-1 downto 0) := x"001122334455"
 		);
 		port (
 			rx_clk: 	in		std_logic;
@@ -72,85 +65,74 @@ architecture behavioral of ethernet is
 	end component;
 
 
+	signal header: t_ethernet_header := (
+		mac_dst => MAC_DESTINATION,
+		mac_src => MAC_SOURCE,
+		ip_type => x"0000"
+	);
 
-
-	constant MAC_ADDRESS: std_logic_vector(6*8-1 downto 0) := x"001122334455";
-
-	signal counter: 	integer := 0;
-	signal header: t_ethernet_header := (mac_dst => x"00D86119493B", mac_src => MAC_ADDRESS, ip_type => x"0000");
-
-	signal fifo_w_en: 	std_logic := '0';
-	signal fifo_en: 	std_logic := '0';
-	signal fifo_din: 	std_logic_vector(3 downto 0) := x"0";
-	signal fifo_dout: 	std_logic_vector(3 downto 0) := x"0";
-
-	type t_STATE is (IDLE, LOADING, EDGE_WAIT);
-	signal state: 		t_STATE := IDLE;
-	signal next_state: 	t_STATE := IDLE;
-
-	signal pkt_rdy: 	std_logic := '0';
 begin
-	NET_RESET_n <= KEY(1);
-
-	state <= next_state;
-
-	fifo_din <= fifo_dout;
-
-	process (NET_RX_CLK)
-	begin
-		if rising_edge(NET_RX_CLK) then
-			case (state) is
-				when IDLE =>
-					fifo_w_en <= '0';
-					fifo_en <= '0';
-					counter <= 0;
-				
-					if pkt_rdy = '1' then
-						next_state <= LOADING;
-					end if;
-
-				when LOADING =>
-					counter <= counter + 1;
-					fifo_w_en <= '1';
-					fifo_en <= '1';
-
-					if counter > 200 then
-						next_state <= IDLE;
-					end if;
-
-				when EDGE_WAIT =>
-			end case;
-		end if;
-	end process;
 
 
 	eth_rx: ethernet_rx 
 		generic map(
-			DATA_BYTES => 100
+			DATA_BYTES => PACKET_DATA_SIZE
 		)
 		port map(
-			rx_clk => NET_RX_CLK,
-			rst_n => KEY(1),
-			rx_d => NET_RXD,
-			rx_dv => NET_RX_DV,
-			fifo_en => fifo_en,
-			fifo_out => fifo_dout,
-			pkt_ready => pkt_rdy
+			rx_clk => rx_clk,
+			rst_n => eth_rst_n,
+			rx_d => rxd,
+			rx_dv => rx_dv,
+			fifo_en => rx_fifo_en,
+			fifo_out => rx_fifo_dout,
+			pkt_ready => rx_pkt_rdy
 		);
 
 	eth_tx: ethernet_tx 
 		generic map(
-			DATA_BYTES => 100
+			DATA_BYTES => PACKET_DATA_SIZE
 		)
 		port map(
-			tx_clk => NET_TX_CLK,
-			rst_n => KEY(1),
-			fifo_w_en => fifo_w_en,
-			fifo_din => fifo_din,
+			tx_clk => tx_clk,
+			rst_n => eth_rst_n,
+			fifo_w_en => tx_fifo_w_en,
+			fifo_din => tx_fifo_din,
 			tx_header => header,
-			tx_en => NET_TX_EN,
-			tx_d => NET_TXD
+			tx_en => tx_en,
+			tx_d => txd
 		);
 	
+
+	-- state <= next_state;
+	-- fifo_din <= fifo_dout;
+
+	-- process (rx_clk)
+	-- begin
+	-- 	if rising_edge(rx_clk) then
+	-- 		case (state) is
+	-- 			when IDLE =>
+	-- 				fifo_w_en <= '0';
+	-- 				fifo_en <= '0';
+	-- 				counter <= 0;
+				
+	-- 				if pkt_rdy = '1' then
+	-- 					next_state <= LOADING;
+	-- 				end if;
+
+	-- 			when LOADING =>
+	-- 				counter <= counter + 1;
+	-- 				fifo_w_en <= '1';
+	-- 				fifo_en <= '1';
+
+	-- 				if counter > 2*PACKET_DATA_SIZE then
+	-- 					next_state <= IDLE;
+	-- 				end if;
+
+	-- 			when EDGE_WAIT =>
+	-- 		end case;
+	-- 	end if;
+	-- end process;
+
+
 end behavioral ;
 

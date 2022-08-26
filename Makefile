@@ -1,9 +1,10 @@
+TOP=ethernet_top
 ETHERNET=ethernet
 ETHERNET_TX=ethernet_tx
 ETHERNET_RX=ethernet_rx
 CRC=crc_gen
 TXFIFO=tx_fifo
-RXFIFO=rx_fifo
+RXFIFO=fifo
 
 UUT=$(ETHERNET)
 
@@ -34,6 +35,7 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/ethernet_package.vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/std_logic_1164_addition.vhd
 
+	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(TOP).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(ETHERNET).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(ETHERNET)_tb.vhd
 
@@ -43,7 +45,7 @@ init: force
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(CRC).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(CRC)_tb.vhd
 	
-	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(TXFIFO).vhd
+	# $(GHDL) -a $(GHDLFLAGS) $(SRC)/$(TXFIFO).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(SRC)/$(RXFIFO).vhd
 	$(GHDL) -a $(GHDLFLAGS) $(TB)/$(RXFIFO)_tb.vhd
 

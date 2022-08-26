@@ -6,7 +6,7 @@ entity rx_fifo_tb is
 end rx_fifo_tb;
 
 architecture test of rx_fifo_tb is
-	component rx_fifo
+	component fifo
 		generic (
 			FIFO_SIZE: integer := 92
 		);
@@ -28,7 +28,7 @@ architecture test of rx_fifo_tb is
 	signal data_out:		std_logic_vector(3 downto 0) := (others => '0');
 	signal packet_ready: 	std_logic := '0';
 begin 
-	uut: rx_fifo
+	uut: fifo
 	generic map (
 		FIFO_SIZE => 20
 	)

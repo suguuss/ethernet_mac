@@ -21,9 +21,9 @@ entity ethernet_tx is
 end ethernet_tx;
 
 architecture behavioral of ethernet_tx is
-	component rx_fifo
+	component fifo
 		generic (
-			FIFO_SIZE: integer := 2*DATA_BYTES
+			FIFO_SIZE: integer := DATA_BYTES
 		);
 		port (
 			clk: 		in 		std_logic;
@@ -234,7 +234,7 @@ begin
 
 	end process;
 
-	send_fifo: rx_fifo port
+	send_fifo: fifo port
 		map(
 			clk => tx_clk,
 			rst_n => rst_n,
