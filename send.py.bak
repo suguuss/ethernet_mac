@@ -16,8 +16,8 @@ def send():
 	#sleep(0.1)
 
 	# Create the packet
-	p = Ether(dst=MAC_DST, type=0) / ("\x00\x7F\x00\x7F\x00\x00\x00\x00\x00" + "\x00\x00\x00"*47)
-	# p = Ether(dst=MAC_DST, type=0) / ("\x00\x00\x7F"*50)
+	# p = Ether(dst=MAC_DST, type=0) / ("\x00\x7F\x00\x7F\x00\x00\x00\x00\x00" + "\x00\x00\x00"*47)
+	p = Ether(dst=MAC_DST, type=0) / ("\x00\x00\x7F"*50)
 
 	#print(f"sending packet : ")
 	#p.show()

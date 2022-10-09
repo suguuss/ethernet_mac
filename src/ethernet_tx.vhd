@@ -191,18 +191,22 @@ begin
 					-- Change of state
 					if counter > DATA_LEN-1 then
 						next_state <= FCS;
+						tx_data <= crc_out_buf(MII_LEN-1 downto 0);
+						fcs_buf <= std_logic_vector(shift_right(unsigned(crc_out_buf), MII_LEN));
 					else
 						next_state <= state;
 					end if;
 
 				when FCS =>
-					if counter = 0 then
-						tx_data <= crc_out_buf(MII_LEN-1 downto 0);
-						fcs_buf <= std_logic_vector(shift_right(unsigned(crc_out_buf), MII_LEN));
-					else
-						tx_data <= fcs_buf(MII_LEN-1 downto 0);
-						fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
-					end if;
+					-- if counter = 0 then
+					-- 	tx_data <= crc_out_buf(MII_LEN-1 downto 0);
+					-- 	fcs_buf <= std_logic_vector(shift_right(unsigned(crc_out_buf), MII_LEN));
+					-- else
+					-- 	tx_data <= fcs_buf(MII_LEN-1 downto 0);
+					-- 	fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
+					tx_data <= fcs_buf(MII_LEN-1 downto 0);
+					fcs_buf <= std_logic_vector(shift_right(unsigned(fcs_buf), MII_LEN));
+					-- end if;
 
 					tx_e <= '1';
 					en_crc <= '0';

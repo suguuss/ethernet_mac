@@ -66,33 +66,41 @@ begin
 			-- sw <= b"01";
 			-- clk <= '0'; wait for 1 ns;
 			-- clk <= '1'; wait for 1 ns;
+			sw <= b"10";
+			clk <= '0'; wait for 1 ns;
+			clk <= '1'; wait for 1 ns;
 			sw <= b"11";
 
+			for i in 0 to 750 loop
+				clk <= '0'; wait for 1 ns;
+				clk <= '1'; wait for 1 ns;
 
-		dv <= '1';
-		for i in 0 to 750 loop
-			rxd <= frame(126*8-1 downto 126*8-4);
-			clk <= '0'; wait for 1 ns;
-			frame <= frame(126*8-5 downto 0) & x"0";
-			clk <= '1'; wait for 1 ns;
+			end loop;
 
-			if i > 150 then
-				dv <= '0';
-			end if;
-		end loop;
+		-- dv <= '1';
+		-- for i in 0 to 750 loop
+		-- 	rxd <= frame(126*8-1 downto 126*8-4);
+		-- 	clk <= '0'; wait for 1 ns;
+		-- 	frame <= frame(126*8-5 downto 0) & x"0";
+		-- 	clk <= '1'; wait for 1 ns;
 
-		frame <= X"555555555555555D001122334455008D169194B3000014243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454AF78CA05";
-		dv <= '1';
-		for i in 0 to 750 loop
-			rxd <= frame(126*8-1 downto 126*8-4);
-			clk <= '0'; wait for 1 ns;
-			frame <= frame(126*8-5 downto 0) & x"0";
-			clk <= '1'; wait for 1 ns;
+		-- 	if i > 150 then
+		-- 		dv <= '0';
+		-- 	end if;
+		-- end loop;
 
-			if i > 150 then
-				dv <= '0';
-			end if;
-		end loop;
+		-- frame <= X"555555555555555D001122334455008D169194B3000014243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454142434541424345414243454AF78CA05";
+		-- dv <= '1';
+		-- for i in 0 to 750 loop
+		-- 	rxd <= frame(126*8-1 downto 126*8-4);
+		-- 	clk <= '0'; wait for 1 ns;
+		-- 	frame <= frame(126*8-5 downto 0) & x"0";
+		-- 	clk <= '1'; wait for 1 ns;
+
+		-- 	if i > 150 then
+		-- 		dv <= '0';
+		-- 	end if;
+		-- end loop;
 
 
 		-- sw <= "01";
